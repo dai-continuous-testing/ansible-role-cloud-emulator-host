@@ -1,0 +1,16 @@
+---
+
+installation_root_folder: "/Applications/Experitest"
+__installation_folder: "{{ installation_root_folder }}/{{ app_name }}-{{ app_version }}"
+
+temp_folder: "/tmp/experitest"
+
+service_plist_file_path: "/Library/LaunchDaemons/{{ service_name }}.plist"
+
+installer_file_name: "dist-Mac-AGENT-{{ app_version }}.zip"
+
+relative_path: "cloud-agent/osx"
+
+launcher_file_name: "start.sh"
+
+mac_ehm_user: "_experitestd"

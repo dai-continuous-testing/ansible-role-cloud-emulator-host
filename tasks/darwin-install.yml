@@ -1,0 +1,237 @@
+
+# validation
+
+- name: assert all vars are set
+  assert: { that: "{{ item }} != '' " }
+  with_items:
+  - app_name
+  - clear_temp_folder
+  - service_name
+  - main_class
+  - installation_folder
+  - clear_before_install
+  - server_port
+  - jmx_port
+  - service_plist_file_path
+  - installer_file_name
+  - ansible_user_id
+  - s3_download_url
+  - launcher_file_name
+  - application_properties
+  - extra_java_options
+  - mac_ehm_user
+
+# required dependencies
+
+- name: make sure java is installed on the machine
+  command: java -version
+  register: java_test
+  ignore_errors: yes
+
+- name: fail if java is not found
+  fail:
+    msg: java must be accesible in path
+  when: java_test.rc != 0
+
+# set temp folder
+
+- name: make sure temp folder
+  file:
+    path: "{{ temp_folder }}"
+    state: directory
+    owner: "{{ ansible_user_id }}"
+  become: yes
+
+# download the file
+
+- name: download zip from s3 url
+  get_url:
+    url: "{{ s3_download_url }}"
+    dest: "{{ temp_folder }}/{{ installer_file_name }}"
+    timeout: "{{ download_timeout | default(60) }}"
+  when: custom_download_url == ""
+
+- name: download zip from custom url
+  get_url:
+    url: "{{ custom_download_url }}"
+    dest: "{{ temp_folder }}/{{ installer_file_name }}"
+    timeout: "{{ download_timeout | default(60) }}"
+  when: custom_download_url != ""
+
+# stop old service
+
+- name: stop the old service
+  command: "launchctl unload {{ service_plist_file_path }}"
+  become: yes
+
+- name: kill adb processes
+  shell: |
+    killall adb
+  register: killadbresults
+  changed_when: killadbresults.rc == 0
+  failed_when: killadbresults.rc != 0 and killadbresults.rc != 1
+  become: yes
+
+# delete old installation (optional)
+
+- name: clear old installation folder
+  file: 
+    path: "{{ installation_folder }}"
+    state: absent
+  when: clear_before_install == True
+  notify:
+    - start the service
+
+# unpack and copy all the files to the installation folder
+
+- name: make sure installation folder exists
+  file:
+    path: "{{ installation_folder }}"
+    state: directory
+    owner: "{{ ansible_user_id }}"
+  become: yes
+
+- name: make sure unzip folder exist
+  file:
+    path: "{{ temp_folder }}/{{ (installer_file_name | splitext)[0] }}"
+    state: directory
+    owner: "{{ ansible_user_id }}"
+  become: yes
+
+# REMOVEME ugly hack - remove the sub folder in zip file
+- name: unzip the file
+  unarchive:
+    src: "{{ temp_folder }}/{{ installer_file_name }}"
+    dest: "{{ temp_folder }}/{{ (installer_file_name | splitext)[0] }}"
+    remote_src: yes
+    creates: "{{ temp_folder }}/{{ (installer_file_name | splitext)[0] }}/{{ convention }}"
+    owner: "{{ ansible_user_id }}"
+  become: yes
+
+- name: copy the file to installation folder
+  command: "cp -r {{ temp_folder }}/{{ (installer_file_name | splitext)[0] }}/{{ convention }}/ {{ installation_folder }}/"
+  become: yes
+  notify:
+    - start the service
+
+- name: copy plist
+  template:
+    src: service.plist.j2
+    dest: "{{ service_plist_file_path }}"
+    # in mac - plist owner is root
+    owner: root
+  become: yes
+
+- name: copy start script
+  template:
+    src: start.sh.j2
+    dest: "{{ installation_folder }}/{{ launcher_file_name }}"
+    mode: 0755
+    owner: "{{ ansible_user_id }}"
+  become: yes
+
+
+# configure installed 
+
+- name: update application properties file
+  lineinfile:
+    path: "{{ installation_folder }}/conf/application.properties"
+    line: "{{ item.key }}={{ item.value }}"
+    regexp: "^{{ item.key }}="
+  with_dict: "{{ application_properties }}"
+  become: yes
+
+- name: update xml conf
+  lineinfile:
+    state: present
+    path: "{{ installation_folder }}/conf/cloudagent.conf.xml"
+    line: "<{{ item.key }}>{{ item.value }}</{{ item.key }}>"
+    regexp: "<{{ item.key }}>.*<\\/{{ item.key }}>"
+    insertbefore:  "<\\/forwarder-configuration>"
+  with_dict: "{{ xml_conf }}"
+  become: yes
+
+- name: set permissions for logs folder
+  file:
+    path: "{{ installation_folder }}/logs"
+    state: directory
+    mode: 0777
+    owner: "{{ ansible_user_id }}"
+  become: yes
+
+- name: reset pairing key
+  file:
+    path: "{{ installation_folder }}/conf/pairing.conf.xml"
+    state: absent
+  become: yes
+
+
+# configure ehm 
+
+- name: check if mac ehm user exists
+  stat: 
+    path: "/Users/{{ mac_ehm_user }}"
+  register: user_home_dir
+
+- name: create mac ehm user
+  command: "/bin/sh {{ installation_folder }}/conf/plist/macUserCreation.sh {{ mac_ehm_user }}"
+  become: yes
+  when: user_home_dir.stat.exists == False
+
+- name: make sure simulator.txt file exists
+  file:
+    path: "{{ installation_folder }}/bin/simulator.txt"
+    state: touch
+    owner: "{{ mac_ehm_user }}"
+  become: yes
+
+- name: write app version to simulator.txt file
+  copy: 
+    content: "{{ app_version }}"
+    dest: "{{ installation_folder }}/bin/simulator.txt"
+  become: yes
+
+- name: change owner of installation folder to ehm user
+  file:
+    path: "{{ installation_folder }}"
+    state: directory
+    recurse: yes
+    owner: "{{ mac_ehm_user }}"
+  become: yes
+
+- name: run mac xcode tools for ehm
+  command: "/bin/sh {{ installation_folder }}/conf/plist/macXcodeTools.sh {{ mac_ehm_user }}"
+  become: yes
+
+- name: add permission to /tmp/experitest_simulators folder
+  file:
+    path: "/tmp/experitest_simulators"
+    state: directory
+    recurse: yes
+    mode: u+rwx,g+rw,o+rw
+    owner: "{{ mac_ehm_user }}"
+  become: yes
+
+# clear temp files (optional)
+
+- name: clear temp folder
+  file:
+    path: "{{ temp_folder }}"
+    state: absent
+  become: yes
+  when: clear_temp_folder | default('no') | bool
+
+# expose role output
+
+- name: sanitize role name
+  set_fact:
+    sanitize_role_name: "{{ role_name | replace('-', '_') | regex_replace('([^A-Za-z0-9_])', '') | trim }}"
+
+- name: expose role output
+  set_fact:
+    "{{ sanitize_role_name }}":
+      server_port: "{{ server_port }}"
+      jmx_port: "{{ jmx_port }}"
+      installation_folder: "{{ installation_folder }}"
+      configuration_file: "{{ installation_folder }}/conf/application.properties"
+      configuration_xml_file: "{{ installation_folder }}/conf/cloudagent.conf.xml"

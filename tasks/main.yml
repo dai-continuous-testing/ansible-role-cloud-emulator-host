@@ -1,0 +1,26 @@
+---
+
+- name: fail if os family is not Darwin
+  fail: 
+    msg: Cloud EHM support Mac OS host only
+  when: ansible_os_family != "Darwin"
+
+- name: validate vars
+  include_tasks: tasks/variables.yml
+
+- name: install
+  include_tasks: "tasks/{{ ansible_os_family | os_family_to_os_type }}-install.yml"
+  when: state|default('present') == 'present' and ansible_os_family == "Darwin"
+
+- name: track versions
+  include_tasks: "tasks/{{ ansible_os_family | os_family_to_os_type }}-track-versions.yml"
+  when: state|default('present') == 'present' and ansible_os_family == "Darwin" 
+
+- name: remove archived versions
+  include_tasks: "tasks/{{ ansible_os_family | os_family_to_os_type }}-remove-archived.yml"
+  when: state|default('present') == 'present'
+
+- name: uninstall
+  include_tasks: "tasks/{{ ansible_os_family | os_family_to_os_type }}-uninstall.yml"
+  when: state|default('present') == 'absent' and ansible_os_family == "Darwin"
+  
