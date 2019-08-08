@@ -1,5 +1,5 @@
 
-- hosts: cloud-ehm
+- hosts: cloud-ehms
 
   roles:
     - role: cloud-emulator-host
