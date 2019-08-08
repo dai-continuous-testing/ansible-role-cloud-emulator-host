@@ -1,0 +1,4 @@
+
+- src: git+https://github.com/ExperitestOfficial/ansible-role-cloud-emulator-host.git
+  version: master
+  name: cloud-emulator-host

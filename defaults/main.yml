@@ -1,0 +1,50 @@
+---
+
+required_modifiable_fields:
+  - app_version
+  - server_port
+  - jmx_port
+  - installation_folder
+
+app_name: cloudagent
+__app_version: 12.7.6702
+
+service_name: "com.experitest.{{ app_name }}"
+main_class: "com.experitest.cloudagent.MainForwarder"
+
+extra_java_options: []
+
+__server_port: 8081
+__jmx_port: 51235
+
+# 
+
+base_application_properties:
+  - "server.port": "{{ server_port }}"
+
+extra_application_properties: {}
+
+application_properties: "{{ base_application_properties | combine(extra_application_properties) }}"
+
+# 
+
+base_xml_conf:
+  - "main-port": "{{ server_port }}"
+
+extra_xml_conf: {}
+
+xml_conf: "{{ base_xml_conf | combine(extra_xml_conf) }}"
+
+#
+
+start_after_install: True
+
+clear_temp_folder: False
+clear_before_install: False
+
+convention: "Agent"
+
+custom_download_url: ""
+
+cdn_name: "devops-artifacts.experitest.com"
+s3_download_url: "https://{{ cdn_name }}/{{ relative_path }}/{{ installer_file_name }}"
