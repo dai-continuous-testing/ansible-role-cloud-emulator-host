@@ -199,9 +199,11 @@
     owner: "{{ mac_ehm_user }}"
   become: yes
 
+ ## Issue - need to verify this command
 - name: run mac xcode tools for ehm
   command: "/bin/sh {{ installation_folder }}/conf/plist/macXcodeTools.sh {{ mac_ehm_user }}"
   become: yes
+  ignore_errors: yes
 
 - name: add permission to /tmp/experitest_simulators folder
   file:
