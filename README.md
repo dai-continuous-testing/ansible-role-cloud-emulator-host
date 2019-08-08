@@ -15,7 +15,7 @@ Role Variables
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
 | state | should the application be present or absent | present, absent | present | no |
-| app_version | application version to install | string | 12.7.6640 | no |
+| app_version | application version to install | string | 12.7.6702 | no |
 | server_port | port number for the server | number | 8081 | no |
 | extra_application_properties | additional props to be override in application.properties file | dict | {} | no |
 | extra_xml_conf | extand xml configuration | dict | {} | no |
