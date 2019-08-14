@@ -214,6 +214,14 @@
     owner: "{{ mac_ehm_user }}"
   become: yes
 
+- name: change owner of installation folder to current user for android support
+  file:
+    path: "{{ installation_folder }}"
+    state: directory
+    recurse: yes
+    owner: "{{ ansible_user_id }}"
+  become: yes
+
 # expose role output
 
 - name: sanitize role name
