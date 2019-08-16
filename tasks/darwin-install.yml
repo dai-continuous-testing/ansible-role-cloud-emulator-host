@@ -165,6 +165,11 @@
     state: absent
   become: yes
 
+# fixed xcode select
+
+- name: Fix xcode select
+  shell: xcode-select -s /Applications/Xcode.app/Contents/Developer/
+  become: yes
 
 # configure ehm 
 
@@ -203,7 +208,6 @@
 - name: run mac xcode tools for ehm
   command: "/bin/sh {{ installation_folder }}/conf/plist/macXcodeTools.sh {{ mac_ehm_user }}"
   become: yes
-  ignore_errors: yes
 
 - name: add permission to /tmp/experitest_simulators folder
   file:
