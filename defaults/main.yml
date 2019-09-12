@@ -5,6 +5,7 @@ required_modifiable_fields:
   - server_port
   - jmx_port
   - installation_folder
+  - java_version
 
 app_name: cloudagent
 __app_version: 12.8.7025
@@ -16,6 +17,8 @@ extra_java_options: []
 
 __server_port: 8081
 __jmx_port: 51235
+
+__java_version: 1.8.0_181
 
 # 
 
@@ -48,3 +51,5 @@ custom_download_url: ""
 
 cdn_name: "devops-artifacts.experitest.com"
 s3_download_url: "https://{{ cdn_name }}/{{ relative_path }}/{{ installer_file_name }}"
+
+java_download_url: "https://{{ cdn_name }}/{{ java_relative_path }}/{{ java_download_filename }}"
