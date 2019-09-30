@@ -40,6 +40,12 @@ xml_conf: "{{ base_xml_conf | combine(extra_xml_conf) }}"
 
 #
 
+extra_logback_properties: {}
+
+logback_properties: "{{ extra_logback_properties }}"
+
+#
+
 start_after_install: True
 
 clear_temp_folder: False
