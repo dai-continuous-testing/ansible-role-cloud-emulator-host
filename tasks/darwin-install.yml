@@ -171,6 +171,14 @@
   with_dict: "{{ xml_conf }}"
   become: yes
 
+- name: update logback properties file
+  lineinfile:
+    path: "{{ installation_folder }}/conf/logback.properties"
+    line: "{{ item.key }}={{ item.value }}"
+    regexp: "^{{ item.key | replace('.', '\\.') }}="
+  with_dict: "{{ logback_properties }}"
+  become: yes
+
 - name: set permissions for logs folder
   file:
     path: "{{ installation_folder }}/logs"
