@@ -6,7 +6,7 @@ This role will install \ uninstall cloud ehm for mac os hosts
 Requirements
 ------------
 
-This role assumes that you have java 8 installed on the instance
+[ansible-role-java8](https://github.com/ExperitestOfficial/ansible-role-java8) must be installed on all machines. <br>
 Supports mac os hosts only.
 
 Role Variables
