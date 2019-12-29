@@ -8,7 +8,10 @@ required_modifiable_fields:
   - java_version
 
 app_name: cloudagent
-__app_version: 12.12.7794
+__app_version: 12.12.7908
+
+darwin_installer_checksum: "676cd4cef57c4e3782c2db834ea8d91abd246d9812d49b36722e8e8b80c32530"
+windows_installer_checksum: "b220d615a139e10e486d01f1662214063a2724441a4bf62b714473e451995051"
 
 service_name: "com.experitest.{{ app_name }}"
 main_class: "com.experitest.cloudagent.MainForwarder"
