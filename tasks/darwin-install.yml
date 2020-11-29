@@ -84,6 +84,18 @@
   become: yes
   ignore_errors: yes
 
+# check if jmx process still running
+- name: check if jmx processes still running
+  shell: "ps -ef | grep -v grep | grep {{ jmx_port }} | awk '{print $2}'"
+  register: jmx_processes
+  become: yes
+
+- name: Kill if jmx processes still running
+  shell: "kill {{ item }}"
+  with_items: "{{ jmx_processes.stdout_lines }}"
+  when: jmx_processes.stdout | length > 0
+  become: yes
+
 # delete old installation (optional)
 
 - name: clear old installation folder
