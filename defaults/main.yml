@@ -18,7 +18,7 @@ extra_java_options: []
 __server_port: 8081
 __jmx_port: 51235
 
-__java_version: 1.8.0_281
+__java_version: 8u292-b10
 
 # 
 
