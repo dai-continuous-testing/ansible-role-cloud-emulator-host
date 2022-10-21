@@ -8,7 +8,7 @@ required_modifiable_fields:
   - java_version
 
 app_name: cloudagent
-__app_version: 22.9.15907
+__app_version: 22.9.16070
 
 service_name: "com.experitest.{{ app_name }}"
 main_class: "com.experitest.cloudagent.MainForwarder"
