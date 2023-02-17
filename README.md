@@ -28,6 +28,8 @@ Role Variables
 | start_after_install | should application start after installation is completed | boolean | True | no |
 | clear_temp_folder | remove temp folder after installation | boolean | False | no |
 | clear_before_install | removing old installation before installing new version | boolean | False | no |
+| download | only download the release version | boolean | True | no |
+| deploy | only deploy the release version | boolean | True | no |
 
 Example Playbook
 ----------------
