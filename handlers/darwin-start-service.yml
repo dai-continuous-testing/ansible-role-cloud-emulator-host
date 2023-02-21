@@ -22,12 +22,3 @@
   fail:
     msg: "app_version: {{ app_version }} does not macthed to installed version {{ (installed_version['content'] | b64decode).split('=')[1] }}"
   when: app_version != (installed_version['content'] | b64decode).split('=')[1]
-  
-- name: check jmx pid
-  shell: "ps -ef | grep -v grep | grep {{ jmx_port }} | awk '{print $2}'"
-  register: jmx_pid
-  become: yes
-
-- name: print jmx pid
-  debug:
-    msg: "jmx pid: {{ jmx_pid.stdout_lines }}"
