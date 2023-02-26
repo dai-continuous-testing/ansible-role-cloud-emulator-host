@@ -59,43 +59,6 @@
     timeout: "{{ download_timeout | default(60) }}"
   when: custom_download_url != ""
 
-# stop old service
-
-- name: stop the old service
-  command: "launchctl unload {{ service_plist_file_path }}"
-  become: yes
-
-- name: kill adb processes
-  shell: |
-    killall adb
-  register: killadbresults
-  changed_when: killadbresults.rc == 0
-  failed_when: killadbresults.rc != 0 and killadbresults.rc != 1
-  become: yes
-  
-- name: Get running jmx processes
-  shell: "ps -ef | grep -v grep | grep {{ jmx_port }} | awk '{print $2}'"
-  register: running_processes
-  become: yes
-
-- name: Kill running jmx processes
-  shell: "kill -9 {{ item }}"
-  with_items: "{{ running_processes.stdout_lines }}"
-  become: yes
-  ignore_errors: yes
-
-# check if jmx process still running
-- name: check if jmx processes still running
-  shell: "ps -ef | grep -v grep | grep {{ jmx_port }} | awk '{print $2}'"
-  register: jmx_processes
-  become: yes
-
-- name: Kill if jmx processes still running
-  shell: "kill {{ item }}"
-  with_items: "{{ jmx_processes.stdout_lines }}"
-  when: jmx_processes.stdout | length > 0
-  become: yes
-
 # delete old installation (optional)
 
 - name: clear old installation folder
@@ -134,16 +97,6 @@
 
 - name: copy the file to installation folder
   command: "cp -r {{ temp_folder }}/{{ (installer_file_name | splitext)[0] }}/{{ convention }}/ {{ installation_folder }}/"
-  become: yes
-  notify:
-    - start the service
-
-- name: copy plist
-  template:
-    src: service.plist.j2
-    dest: "{{ service_plist_file_path }}"
-    # in mac - plist owner is root
-    owner: root
   become: yes
 
 - name: copy start script
@@ -215,12 +168,6 @@
   with_items:
     - "{{ delete_vmoptions.files }}"
 
-# fixed xcode select
-
-- name: Fix xcode select
-  shell: xcode-select -s /Applications/Xcode.app/Contents/Developer/
-  become: yes
-
 # configure ehm 
 
 - name: check if mac ehm user exists
@@ -254,28 +201,6 @@
     owner: "{{ mac_ehm_user }}"
   become: yes
 
- ## Issue - need to verify this command
-- name: run mac xcode tools for ehm
-  command: "/bin/sh {{ installation_folder }}/conf/plist/macXcodeTools.sh {{ mac_ehm_user }}"
-  become: yes
-
-- name: add permission to /tmp/experitest_simulators folder
-  file:
-    path: "/tmp/experitest_simulators"
-    state: directory
-    recurse: yes
-    mode: u+rwx,g+rw,o+rw
-    owner: "{{ mac_ehm_user }}"
-  become: yes
-
-- name: change owner of installation folder to current user for android support
-  file:
-    path: "{{ installation_folder }}"
-    state: directory
-    recurse: yes
-    owner: "{{ ansible_user_id }}"
-  become: yes
-
 # set permission to zipalign file
 
 - name: check the zipalign file exists
@@ -291,18 +216,3 @@
   become: yes
   when: zipalign_exists.stat.exists
 
-# expose role output
-
-- name: sanitize role name
-  set_fact:
-    sanitize_role_name: "{{ role_name | replace('-', '_') | regex_replace('([^A-Za-z0-9_])', '') | trim }}"
-
-- name: expose role output
-  set_fact:
-    "{{ sanitize_role_name }}":
-      server_port: "{{ server_port }}"
-      jmx_port: "{{ jmx_port }}"
-      installation_folder: "{{ installation_folder }}"
-      configuration_file: "{{ installation_folder }}/conf/application.properties"
-      configuration_xml_file: "{{ installation_folder }}/conf/cloudagent.conf.xml"
-      service_plist_file_path: "{{ service_plist_file_path }}"

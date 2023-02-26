@@ -9,7 +9,7 @@
   - app_name
   - app_version
 
-# 
+# track versions
 
 - name: test for current installation version
   stat:
