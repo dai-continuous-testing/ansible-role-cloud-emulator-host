@@ -22,29 +22,6 @@
   changed_when: killadbresults.rc == 0
   failed_when: killadbresults.rc != 0 and killadbresults.rc != 1
   become: yes
-  
-- name: Get running jmx processes
-  shell: "ps -ef | grep -v grep | grep {{ jmx_port }} | awk '{print $2}'"
-  register: running_processes
-  become: yes
-
-- name: Kill running jmx processes
-  shell: "kill -9 {{ item }}"
-  with_items: "{{ running_processes.stdout_lines }}"
-  become: yes
-  ignore_errors: yes
-
-# check if jmx process still running
-- name: check if jmx processes still running
-  shell: "ps -ef | grep -v grep | grep {{ jmx_port }} | awk '{print $2}'"
-  register: jmx_processes
-  become: yes
-
-- name: Kill if jmx processes still running
-  shell: "kill {{ item }}"
-  with_items: "{{ jmx_processes.stdout_lines }}"
-  when: jmx_processes.stdout | length > 0
-  become: yes
 
 - name: copy plist
   template:
