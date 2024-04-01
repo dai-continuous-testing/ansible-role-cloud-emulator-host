@@ -21,10 +21,6 @@
     - state|default('present') == 'present' 
     - ansible_os_family == "Darwin"
     - deploy | default('true') | bool
-
-- name: clear temp folder
-  include_tasks: "tasks/{{ ansible_os_family | os_family_to_os_type }}-clear-temp.yml"
-  when: clear_temp_folder | default('no') | bool
   
 - name: track versions
   include_tasks: "tasks/{{ ansible_os_family | os_family_to_os_type }}-track-versions.yml"
@@ -37,6 +33,13 @@
   include_tasks: "tasks/{{ ansible_os_family | os_family_to_os_type }}-remove-archived.yml"
   when: 
     - state|default('present') == 'present'
+    - deploy | default('true') | bool
+
+- name: clear temp folder
+  include_tasks: "tasks/{{ ansible_os_family | os_family_to_os_type }}-clear-temp.yml"
+  when: 
+    - clear_temp_folder | default('no') | bool
+    - ansible_os_family == "Darwin"
     - deploy | default('true') | bool
 
 - name: uninstall
