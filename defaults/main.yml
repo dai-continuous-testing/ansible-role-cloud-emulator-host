@@ -49,7 +49,7 @@ java_options: "{{ base_java_options + extra_java_options + enabled_otel_java_opt
 
 __server_port: 8081
 
-__java_version: 17.0.18_8
+__java_version: 25.0.4_7
 
 # 
 
