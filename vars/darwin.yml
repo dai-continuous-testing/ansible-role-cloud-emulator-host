@@ -17,7 +17,7 @@ mac_ehm_user: "_experitestd"
 
 java_source_installation_folder: "/Applications/Experitest/jre"
 
-java_installation_folder: "/usr/local/share/jre"
+java_installation_folder: "/usr/local/share/experitest/"
 
 java_runtime_directory_name: "jdk{{ java_version }}-jre"
 
