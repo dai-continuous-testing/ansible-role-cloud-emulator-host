@@ -15,10 +15,16 @@ launcher_file_name: "start.sh"
 
 mac_ehm_user: "_experitestd"
 
-java_download_filename: "OpenJDK8U-jre_x64_mac_hotspot_{{ java_version }}.tar.gz"
+java_source_installation_folder: "/Applications/Experitest/jre"
 
-java_relative_path: "java/osx"
+java_installation_folder: "/usr/local/share/jre"
 
-java_installation_folder: "{{ installation_root_folder }}/jre"
+java_runtime_directory_name: "jdk{{ java_version }}-jre"
 
-java_bin: "{{ java_installation_folder }}/jdk{{ java_version }}-jre/Contents/Home/bin/java"
+java_source_runtime_folder: "{{ java_source_installation_folder }}/{{ java_runtime_directory_name }}"
+
+java_runtime_folder: "{{ java_installation_folder }}/{{ java_runtime_directory_name }}"
+
+java_source_bin: "{{ java_source_runtime_folder }}/Contents/Home/bin/java"
+
+java_bin: "{{ java_runtime_folder }}/Contents/Home/bin/java"
