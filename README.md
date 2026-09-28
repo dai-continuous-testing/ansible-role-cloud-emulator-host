@@ -6,7 +6,7 @@ This role will install \ uninstall cloud ehm for mac os hosts
 Requirements
 ------------
 
-* A separate JRE role must install the required runtime under `/Applications/Experitest/jre/` before this role runs. This role migrates the EHM runtime into `/usr/local/share/jre/` and uses that shared location. <br>
+* [ansible-role-java](https://github.com/ExperitestOfficial/ansible-role-java) must be installed on all machines. <br>
 * Supports mac os hosts only.
 
 Role Variables
