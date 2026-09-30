@@ -22,3 +22,5 @@ java_relative_path: "java/osx"
 java_installation_folder: "{{ installation_root_folder }}/jre"
 
 java_bin: "{{ java_installation_folder }}/jdk{{ java_version }}-jre/Contents/Home/bin/java"
+
+logs_folder: "{{ installation_root_folder }}/logs"
