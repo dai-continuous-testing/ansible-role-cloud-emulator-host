@@ -33,19 +33,6 @@
     owner: "{{ ansible_user_id }}"
   become: yes
 
-# required java dependency
-
-- name: make sure java is installed on the machine
-  command: "{{ java_bin }} -version"
-  register: java_test
-  become: yes
-  ignore_errors: yes
-
-- name: fail if java is not found
-  fail:
-    msg: "java must be accesible in path {{ java_bin }}"
-  when: java_test.rc != 0
-
 # download the file
 
 - name: download zip from s3 url

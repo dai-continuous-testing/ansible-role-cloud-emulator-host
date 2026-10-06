@@ -6,7 +6,7 @@ This role will install \ uninstall cloud ehm for mac os hosts
 Requirements
 ------------
 
-* [ansible-role-java8](https://github.com/ExperitestOfficial/ansible-role-java8) must be installed on all machines. <br>
+* [ansible-role-java](https://github.com/dai-continuous-testing/ansible-role-java) must be installed on all machines. <br>
 * Supports mac os hosts only.
 
 Role Variables
@@ -22,7 +22,7 @@ Role Variables
 | extra_xml_conf | extand xml configuration | dict | {} | no |
 | extra_java_options | extand java options | array of strings | [] | no |
 | installation_root_folder | the root folder in which the application will be installed under cloud-agent-{version} folder | string | for mac: /Applications/Experitest <br> for windows: C:\\Experitest | no |
-| java_version | java jre version to install | string | 8u292-b10 | no |
+| java_version | java jre version directory to reuse and migrate for EHM | string | 25.0.4_7 | no |
 | custom_download_url | custom url to download the installation from (zip format) | string |  | no |
 | start_after_install | should application start after installation is completed | boolean | True | no |
 | clear_temp_folder | remove temp folder after installation | boolean | False | no |
