@@ -19,7 +19,6 @@ exec "$JAVA_BIN" -cp ".:lib/*" \
     -Dlogback.configurationFile=conf/logback.xml \
     -Dio.netty.noUnsafe=true \
     -Djdk.nio.maxCachedBufferSize=262144 \
-    -Djava.net.preferIPv4Stack=true \
     -Djava.library.path=./:./bin:./bin/native/darwin \
     {{ java_options | join(' ') }} \
     {{ main_class }}
