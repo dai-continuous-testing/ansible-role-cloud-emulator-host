@@ -22,7 +22,7 @@ Role Variables
 | extra_xml_conf | extand xml configuration | dict | {} | no |
 | extra_java_options | extand java options | array of strings | [] | no |
 | installation_root_folder | the root folder in which the application will be installed under cloud-agent-{version} folder | string | for mac: /Applications/Experitest <br> for windows: C:\\Experitest | no |
-| java_version | java jre version directory to reuse and migrate for EHM | string | 25.0.4_7 | no |
+| java_version | java jre version directory to reuse and migrate for EHM | string | 25.0.5_8 | no |
 | custom_download_url | custom url to download the installation from (zip format) | string |  | no |
 | start_after_install | should application start after installation is completed | boolean | True | no |
 | clear_temp_folder | remove temp folder after installation | boolean | False | no |
