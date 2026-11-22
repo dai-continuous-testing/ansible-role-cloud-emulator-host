@@ -29,5 +29,3 @@ java_source_bin: "{{ java_source_runtime_folder }}/Contents/Home/bin/java"
 
 java_bin: "{{ java_runtime_folder }}/Contents/Home/bin/java"
 
-# CVE-2026-114938 (Java4Shell): macOS uses the fixed Temurin build.
-__java_version: "25.0.5.1_2"
