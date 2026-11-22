@@ -28,3 +28,4 @@ java_runtime_folder: "{{ java_installation_folder }}/{{ java_runtime_directory_n
 java_source_bin: "{{ java_source_runtime_folder }}/Contents/Home/bin/java"
 
 java_bin: "{{ java_runtime_folder }}/Contents/Home/bin/java"
+
