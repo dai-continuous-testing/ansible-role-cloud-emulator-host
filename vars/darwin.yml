@@ -29,6 +29,3 @@ java_source_bin: "{{ java_source_runtime_folder }}/Contents/Home/bin/java"
 
 java_bin: "{{ java_runtime_folder }}/Contents/Home/bin/java"
 
-# CVE-2026-114938 (Java4Shell): Apple Silicon uses the fixed Temurin build.
-# Intel Macs stay on 25.0.5_8 until Adoptium publishes a fixed x64 build for Java 25.
-__java_version: "{{ '25.0.5.1_2' if ansible_architecture == 'arm64' else '25.0.5_8' }}"
